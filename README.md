@@ -16,6 +16,7 @@ Goals:
   a rendering loop
 - **resize handling**: window-filling WebGL canvas with correct canvas resizing if the window's size
   changes
+- **no global namespace pollution**
 
 Non-goals:
 - **3D graphics**: if you want to do 3D graphics, replace the shaders
