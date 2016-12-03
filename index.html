@@ -17,6 +17,8 @@
 			var buf;
 			var then;
 
+			// each of these functions calls the next
+			// when it's done, so we only need to call start()
 			function start() {
 				var canvas = document.getElementById("c");
 				gl = canvas.getContext("webgl");
@@ -28,7 +30,7 @@
 				loadShaders();
 			}
 			function loadShaders() {
-				var count = 2;
+				var count = 2; // how many shaders still to load?
 				var vs;
 				var fs;
 
@@ -39,7 +41,7 @@
 						fs = shader;
 					}
 					count -= 1;
-					if(count == 0) {
+					if(count == 0) { // done loading
 						program = createProgram(gl, vs, fs);
 						gl.useProgram(program);
 
@@ -58,7 +60,6 @@
 				                 0.3, 0.3];
 				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 				setupVertexAttributes();
-
 			}
 			function setupVertexAttributes() {
 				var location = gl.getAttribLocation(program, "position");
@@ -76,12 +77,12 @@
 				gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 				then = window.performance.now();
 
-				requestAnimationFrame(loop);
+				requestAnimationFrame(loop); // start loop
 			}
 
 			// main loop
 			function loop(now) {
-				var dt = now - then;
+				var dt = now - then; // timestep is available here (for demonstration purposes; it's unused)
 				then = now;
 				resize(gl);
 
