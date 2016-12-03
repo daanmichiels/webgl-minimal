@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>WebGL</title>
+	<style>
+		body { margin: 0; }
+		canvas { width: 100vw; height: 100vh; display: block; }
+	</style>
+	<script src="utils.js" type="text/javascript"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		document.addEventListener("DOMContentLoaded", function() {
+			var gl;
+			var program;
+			var buf;
+			var then;
+
+			function start() {
+				var canvas = document.getElementById("c");
+				gl = canvas.getContext("webgl");
+				if(!gl) {
+					console.log("No WebGL.");
+					return;
+				}
+
+				loadShaders();
+			}
+			function loadShaders() {
+				var count = 2;
+				var vs;
+				var fs;
+
+				function callback(sh, shader) {
+					if(sh == "vs") {
+						vs = shader;
+					} else {
+						fs = shader;
+					}
+					count -= 1;
+					if(count == 0) {
+						program = createProgram(gl, vs, fs);
+						gl.useProgram(program);
+
+						setupBuffer();
+					}
+				}
+				loadShader(gl, gl.VERTEX_SHADER, "basic.vert", (shader) => { callback("vs", shader); });
+				loadShader(gl, gl.FRAGMENT_SHADER, "basic.frag", (shader) => { callback("fs", shader); });
+			}
+			function setupBuffer() {
+				buf = gl.createBuffer();
+				gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+				var positions = [-0.3, -0.3,
+				                 0.3, -0.3,
+				                 -0.3, 0.3,
+				                 0.3, 0.3];
+				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+				setupVertexAttributes();
+
+			}
+			function setupVertexAttributes() {
+				var location = gl.getAttribLocation(program, "position");
+				gl.enableVertexAttribArray(location);
+				gl.vertexAttribPointer(location,
+					2, // size
+					gl.FLOAT, // type
+					false, // normalize?
+					0, // stride
+					0); // offset
+
+				remainder();
+			}
+			function remainder() {
+				gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+				then = window.performance.now();
+
+				requestAnimationFrame(loop);
+			}
+
+			// main loop
+			function loop(now) {
+				var dt = now - then;
+				then = now;
+				resize(gl);
+
+				gl.clearColor(0.392 + 0.4*Math.sin(0.0004 * now), 0.584 + 0.3*Math.cos(0.00051*now), 0.829 + 0.15*Math.sin(0.00002*now), 1);
+				gl.clear(gl.COLOR_BUFFER_BIT);
+				gl.drawArrays(gl.TRIANGLE_STRIP,
+					0, // offset
+					4); // count
+
+				//console.log(dt);
+				requestAnimationFrame(loop);
+			}
+
+			start();
+		});
+	</script>
+	<canvas id="c">
+		Canvas!
+	</canvas>
+</body>
+</html>
