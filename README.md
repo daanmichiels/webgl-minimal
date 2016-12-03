@@ -2,6 +2,7 @@
 
 This repository contains a minimalistic example of WebGL.
 I wrote this because every time I want to start writing something in WebGL, it takes me a while to get things set up.
+
 See it in action at http://www.daanmichiels.com/webgl-minimal/.
 
 Goals:
